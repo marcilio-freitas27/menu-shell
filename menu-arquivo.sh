@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /usr/bin/bash
 # here document
 cat <<EOF
 Cadastro de usuários
@@ -12,7 +12,10 @@ Cadastro de usuários
 EOF
 
 # array 
-list=("teste" "novo" "velho");
+# list=("teste" "novo" "velho");
+# criar o arquivo list
+rm list.txt
+touch list.txt;
 
 # entrada de dados. -p para fazer a entrada junto com uma variável(acho que é isso kk)
 # se o shell atual for o zsh, utilize o vared ao invés do read para input de dados 
@@ -24,7 +27,7 @@ else
 fi
 
 # variáve que diz a quantidade de itens do array
-count=${#list[@]};
+# count=${#list[@]};
 
 # funções
 
@@ -33,11 +36,13 @@ adicionar(){
 	if [ $0 = "zsh" ]
 	then 
 		vared -p "Informa o nome: " -c nome;
-		list[${count}+1]=${nome};
+		# list[${count}+1]=${nome};
+        echo ${nome} >> list.txt;
 		echo -e "${nome} foi adicionado.";
 	else
 		read -p "Informa o nome: " nome;
-		list[${count}+1]=${nome};
+		# list[${count}+1]=${nome};
+        echo ${nome} >> list.txt
 		echo -e "${nome} foi adicionado.";
 	fi
 }
@@ -45,7 +50,8 @@ adicionar(){
 # Listar: Exibi todos os itens da lista(semelhante a count. o * faz o mesmo do @)
 
 listar(){
-	echo ${list[*]};
+	# echo ${list[*]};
+    cat list.txt
 }
 
 # Deletar: Mostra quantos itens tem na lista, Pergunta o index do item para excluir através da posição(unset)
@@ -53,14 +59,16 @@ listar(){
 deletar(){
 	if [ $0 = "zsh" ]
 	then 
-		echo -e "A lista tem ${#list[@]} items.";
+		# echo -e "A lista tem ${#list[@]} items.";
 		vared -p "Qual item da lista vc quer apagar? " -c index;
-		unset list[${index}];
+		# unset list[${index}];
+        sed -i "/${index}/d" list.txt
 		echo -e "O item foi apagado da sua lista.";
 	else
-		echo -e "A lista tem ${#list[@]} items.";
+		# echo -e "A lista tem ${#list[@]} items.";
 		read -p "Qual item da lista vc quer apagar? " index;
-		unset list[${index}];
+		# unset list[${index}];
+        sed -i "/${index}/d" list.txt
 		echo -e "O item foi apagado da sua lista.";
 	fi
 	
@@ -71,16 +79,18 @@ deletar(){
 atualizar(){
 	if [ $0 = "zsh" ]
 	then
-		echo -e "a lista tem ${#list[@]} items";
+		# echo -e "a lista tem ${#list[@]} items";
 		vared -p "Qual o item que vc irá alterar?" -c item;
-		read -p "Insira o novo nome: " novoItem
-		list[${item}]=${novoItem};
+		vared -p "Insira o novo nome: " -c novoItem
+        sed -i "s/${item}/${novoItem}/" list.txt
+		# list[${item}]=${novoItem};
 		echo -e "O item foi alterado.";
 	else
-		echo -e "a lista tem ${#list[@]} items";
+		# echo -e "a lista tem ${#list[@]} items";
 		read -p "Qual o item que vc irá alterar?" item;
 		read -p "Insira o novo nome: " novoItem
-		list[${item}]=${novoItem};
+		# list[${item}]=${novoItem};
+        sed -i "s/${item}/${novoItem}/" list.txt
 		echo -e "O item foi alterado.";
 	fi
 }

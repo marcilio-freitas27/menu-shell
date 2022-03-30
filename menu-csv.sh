@@ -1,4 +1,5 @@
-#! /bin/bash
+#! /usr/bin/bash
+
 # here document
 cat <<EOF
 Cadastro de usuários
@@ -12,7 +13,15 @@ Cadastro de usuários
 EOF
 
 # array 
-list=("teste" "novo" "velho");
+# list=("teste" "novo" "velho");
+# criar o arquivo list
+
+# if [[ -f list.csv ]]
+# then
+#     rm list.csv;
+# else
+#     touch list.csv;
+# fi
 
 # entrada de dados. -p para fazer a entrada junto com uma variável(acho que é isso kk)
 # se o shell atual for o zsh, utilize o vared ao invés do read para input de dados 
@@ -24,28 +33,33 @@ else
 fi
 
 # variáve que diz a quantidade de itens do array
-count=${#list[@]};
+# count=${#list[@]};
 
 # funções
 
-# Adicionar: Pede um nome e insere ele na última posição do array
+# Adicionar: Pede um valores e insere ele na última posição do array
 adicionar(){
 	if [ $0 = "zsh" ]
 	then 
-		vared -p "Informa o nome: " -c nome;
-		list[${count}+1]=${nome};
-		echo -e "${nome} foi adicionado.";
+		vared -p "Informa o valores: " -c valores;
+		# list[${count}+1]=${valores};
+        echo ${valores} >> list.csv;
+		echo -e "${valores} foi adicionado.";
 	else
-		read -p "Informa o nome: " nome;
-		list[${count}+1]=${nome};
-		echo -e "${nome} foi adicionado.";
+		read -p "Informa o valores: " valores;
+		# list[${count}+1]=${valores};
+        echo ${valores} >> list.csv
+		echo -e "${valores} foi adicionado.";
 	fi
 }
 
 # Listar: Exibi todos os itens da lista(semelhante a count. o * faz o mesmo do @)
 
 listar(){
-	echo ${list[*]};
+    IDSOUGHT="$1"
+	# echo ${list[*]};
+    # cat list.csv
+    grep -E "^$IDSOUGTH" list.csv;
 }
 
 # Deletar: Mostra quantos itens tem na lista, Pergunta o index do item para excluir através da posição(unset)
@@ -53,14 +67,16 @@ listar(){
 deletar(){
 	if [ $0 = "zsh" ]
 	then 
-		echo -e "A lista tem ${#list[@]} items.";
+		# echo -e "A lista tem ${#list[@]} items.";
 		vared -p "Qual item da lista vc quer apagar? " -c index;
-		unset list[${index}];
+		# unset list[${index}];
+        sed -i "/${index}/d" list.csv
 		echo -e "O item foi apagado da sua lista.";
 	else
-		echo -e "A lista tem ${#list[@]} items.";
+		# echo -e "A lista tem ${#list[@]} items.";
 		read -p "Qual item da lista vc quer apagar? " index;
-		unset list[${index}];
+		# unset list[${index}];
+        sed -i "/${index}/d" list.csv
 		echo -e "O item foi apagado da sua lista.";
 	fi
 	
@@ -71,16 +87,19 @@ deletar(){
 atualizar(){
 	if [ $0 = "zsh" ]
 	then
-		echo -e "a lista tem ${#list[@]} items";
+		# echo -e "a lista tem ${#list[@]} items";
 		vared -p "Qual o item que vc irá alterar?" -c item;
-		read -p "Insira o novo nome: " novoItem
-		list[${item}]=${novoItem};
+		vared -p "Insira o novo valores: " -c novoItem
+        # sed -i "s/${item}/${novoItem}/" list.csv
+        sed -i "s/${item}/${novoItem}/" list.csv
+		# list[${item}]=${novoItem};
 		echo -e "O item foi alterado.";
 	else
-		echo -e "a lista tem ${#list[@]} items";
+		# echo -e "a lista tem ${#list[@]} items";
 		read -p "Qual o item que vc irá alterar?" item;
-		read -p "Insira o novo nome: " novoItem
-		list[${item}]=${novoItem};
+		read -p "Insira o novo valores: " novoItem
+		# list[${item}]=${novoItem};
+        sed -i "s/${item}/${novoItem}/" list.csv
 		echo -e "O item foi alterado.";
 	fi
 }
@@ -141,3 +160,8 @@ do
 	fi
 
 done
+
+
+#tail list.csv | grep -n ^[0-9]* | sed "s/marcilio/nome/"
+#tail list.csv | grep -n ^[0-9]* "
+#tail -n +1 list.csv | grep -n ^[0-9]* 
